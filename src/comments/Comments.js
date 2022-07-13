@@ -9,24 +9,80 @@ import {
 } from "../api";
 
 const Comments = ({ commentsUrl, currentUserId }) => {
-  const [backendComments, setBackendComments] = useState([]);
+  const [backendComments, setBackendComments] = useState(JSON.parse(localStorage.getItem('cartProduct')));
+  const [backendComments1, setBackendComments1] = useState([])
+  
+
   const [activeComment, setActiveComment] = useState(null);
   const rootComments = backendComments.filter(
     (backendComment) => backendComment.parentId === null
   );
+ 
+  useEffect(()=>{
+    let jsonString = JSON.stringify(backendComments)
+   localStorage.setItem('cartProduct', jsonString)
+
+  },[backendComments])
+
+
+
   const getReplies = (commentId) =>
+
+  
     backendComments
       .filter((backendComment) => backendComment.parentId === commentId)
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
+      // .sort(
+      //   (a, b) =>
+      //     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          
+      // )
+      
+ 
+
+
+  // --------
+      
+      
   const addComment = (text,name, parentId) => {
     createCommentApi(text,name, parentId).then((comment) => {
       setBackendComments([comment, ...backendComments]);
       setActiveComment(null);
+      
     });
   };
+
+
+  const sortcomment=()=>{
+    //setBackendComments2(backendComments)
+    backendComments.sort((a,b) => {
+      return new Date(a.createComment).getTime() - 
+          new Date(b.createComment).getTime()
+  }).reverse();
+ // console.log(backendComments)
+ setBackendComments1(backendComments)
+ 
+ //setBackendComments2(backendComments)
+ 
+ 
+ 
+
+ 
+ 
+  
+
+    
+ 
+  
+   
+  }
+  
+
+  
+  
+  
+  
+    
+  
 
   const updateComment = (text, commentId) => {
     updateCommentApi(text).then(() => {
@@ -53,8 +109,12 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 
   useEffect(() => {
     getCommentsApi().then((data) => {
-     // setBackendComments(data);
-     setBackendComments(JSON.parse(window.localStorage.setItem(data)))
+    //  setBackendComments(data);
+    setBackendComments(JSON.parse(window.localStorage.setItem(data)))
+    
+   
+    
+   
     });
   }, []);
  
@@ -65,8 +125,26 @@ const Comments = ({ commentsUrl, currentUserId }) => {
       <CommentForm submitLabel="post" title="Comment" placecomment="Comment" handleSubmit={addComment} />
       <div
               className="comment-actiondel">
-    Sort By:Date
+               
+    Sort By:Date&time: 
+    
+    <span
+              className="comment-action"
+              onClick={sortcomment
+              }
+            >
+            <i id="dec" class="fa fa-arrow-down"></i>
+            </span>
+            {/* <span
+              className="comment-action"
+              onClick={sortcommentasc
+              }
+            >
+            <i id="asc" class="fa fa-arrow-up"></i>
+            </span> */}
+   
     </div>
+   
       <div className="comments-container">
         {rootComments.map((rootComment) => (
           <Comment
@@ -79,6 +157,7 @@ const Comments = ({ commentsUrl, currentUserId }) => {
             deleteComment={deleteComment}
             updateComment={updateComment}
             currentUserId={currentUserId}
+           
           />
         ))}
       </div>

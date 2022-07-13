@@ -13,12 +13,39 @@ const CommentForm = ({
 }) => {
   const [text, setText] = useState(initialText);
   const[name,setName]=useState(initialname);
-  const isTextareaDisabled = text.length === 0;
+  const[error,seterror]=useState("")
+  const[error1,seterror1]=useState("")
+  
+  const isTextareaDisabled = text.length===0 || name.length === 0;
+  const handlename=(name)=>{
+    if(name.length===0){
+      seterror("name not empty")
+     // console.log(error)
+    }
+    else{
+      setName(name)
+      seterror("")
+    }
+
+  }
+  const handletext=(text)=>{
+    if(text.length===0){
+      seterror1("comment not empty")
+     // console.log(error)
+    }
+    else{
+      setText(text)
+      seterror1("")
+    }
+
+  }
+ 
   const onSubmit = (event) => {
     event.preventDefault();
     handleSubmit(text,name);
     setText("");
-    setName("")
+    setName("");
+    
   };
   return (
     <>
@@ -27,15 +54,20 @@ const CommentForm = ({
       <textarea
         className="comment-form-textarea"
         placeholder="Name"
+        name="fname"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => handlename(e.target.value)}
+        
       />
+      <h1>{error}</h1>
       <textarea
         className="comment-form-textarea"
+        name="fcomment"
         placeholder={placecomment}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => handletext(e.target.value)}
       />
+       <h1>{error1}</h1>
       <button className="comment-form-button" disabled={isTextareaDisabled}>
         {submitLabel}
       </button>
